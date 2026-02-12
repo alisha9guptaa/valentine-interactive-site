@@ -25,3 +25,8 @@ This project features:
 
 ## 💡 Project Purpose
 Built as a fun interactive frontend project to explore JavaScript-based UI behavior and event handling.
+
+
+## 👩‍💻 Author
+Alisha Gupta  
+Computer Science Student | Exploring Frontend Development
