@@ -1,5 +1,8 @@
 # 💘 Interactive Valentine Website
 
+## 🚀 Live Demo
+[Click here to view the live site](https://alisha9guptaa.github.io/valentine-interactive-site/)
+
 A playful and interactive Valentine-themed website built using HTML, CSS, and JavaScript.
 
 This project features:
