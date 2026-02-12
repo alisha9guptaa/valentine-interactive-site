@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will you be my Valentine? 💘</title>
+  <style>
+    :root{
+      --bg1:#ffedf3;
+      --bg2:#ffe0ea;
+      --text:#2b2b2b;
+      --yes:#ff3b7a;
+      --no:#3b3b3b;
+      --card:#ffffffcc;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: radial-gradient(circle at top, var(--bg1), var(--bg2));
+      overflow:hidden;
+    }
+
+    /* Floating hearts background */
+    .heart {
+      position:absolute;
+      width:14px; height:14px;
+      background: #ff6fa0;
+      transform: rotate(45deg);
+      opacity: .25;
+      animation: floatUp linear infinite;
+    }
+    .heart::before, .heart::after{
+      content:"";
+      position:absolute;
+      width:14px; height:14px;
+      background:#ff6fa0;
+      border-radius:50%;
+    }
+    .heart::before{ left:-7px; top:0; }
+    .heart::after{ top:-7px; left:0; }
+
+    @keyframes floatUp{
+      from { transform: translateY(30vh) rotate(45deg); }
+      to   { transform: translateY(-120vh) rotate(45deg); }
+    }
+
+    .card{
+      width:min(720px, 92vw);
+      background: var(--card);
+      backdrop-filter: blur(10px);
+      border:1px solid #ffffff80;
+      border-radius: 24px;
+      padding: 22px 18px 26px;
+      box-shadow: 0 20px 60px #00000018;
+      position:relative;
+      z-index:2;
+      text-align:center;
+    }
+
+    h1{
+      margin: 8px 0 12px;
+      font-size: clamp(28px, 3.4vw, 44px);
+      letter-spacing: .2px;
+    }
+
+    .sub{
+      margin:0 0 14px;
+      opacity:.85;
+      font-size: 15px;
+    }
+
+    .photos{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin: 10px 0 14px;
+    }
+    .photo{
+      width: 190px;
+      height: 190px;
+      border-radius: 18px;
+      overflow:hidden;
+      background:#fff;
+      border:1px solid #00000010;
+      box-shadow: 0 10px 25px #00000012;
+    }
+    .photo img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+
+    .arena{
+      position:relative;
+      width: min(520px, 88vw);
+      height: 170px;
+      margin: 16px auto 6px;
+      border-radius: 18px;
+      background: #ffffffb0;
+      border:1px dashed #ff8fb4;
+      overflow:hidden;
+    }
+
+    .btn{
+      position:absolute;
+      top: 60px;
+      padding: 12px 26px;
+      border:none;
+      border-radius: 999px; /* oval */
+      font-weight:700;
+      font-size: 18px;
+      cursor:pointer;
+      transition: transform .12s ease;
+      user-select:none;
+      box-shadow: 0 10px 22px #00000014;
+    }
+    .btn:active{ transform: scale(0.96); }
+
+    #yesBtn{
+        left: 60px;
+        top: 60px;
+        background: var(--yes);
+        color:white;
+    }
+
+    /* #noBtn{
+        right: 60px;
+        left: auto;
+        top: 60px;
+        background: #111;
+        color:white;
+    } */
+
+    #noBtn{
+        left: 320px;       /* start on the right side */
+        top: 60px;
+        background: #111;
+        color: white;
+    }
+
+    .hint{
+      margin-top: 10px;
+      font-size: 14px;
+      opacity:.8;
+    }
+
+    .toast{
+        margin: 12px auto 10px;
+        width: fit-content;
+        max-width: min(520px, 88vw);
+        background: #111;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-size: 14px;
+        box-shadow: 0 12px 30px #00000025;
+
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity .2s ease, transform .2s ease;
+        pointer-events: none;
+    }
+    .toast.show{
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Modal */
+    .modalWrap{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:#00000055;
+      z-index:10;
+      padding: 18px;
+    }
+    .modal{
+      width:min(520px, 92vw);
+      background:#fff;
+      border-radius: 22px;
+      padding: 18px 16px 16px;
+      text-align:center;
+      box-shadow: 0 24px 80px #00000035;
+    }
+    .yay{
+      font-size: 48px;
+      margin: 10px 0 6px;
+    }
+    .modal p{
+      margin: 6px 0 14px;
+      font-size: 16px;
+      line-height:1.4;
+    }
+    .close{
+      border:none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight:700;
+      cursor:pointer;
+      background: #ff3b7a;
+      color:white;
+    }
+
+    /* Confetti */
+    .confetti{
+      position:fixed;
+      top:-10px;
+      width:10px;
+      height:14px;
+      opacity:.9;
+      z-index:9;
+      animation: fall linear forwards;
+    }
+    @keyframes fall{
+      to{
+        transform: translateY(110vh) rotate(540deg);
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating hearts -->
+  <script>
+    // Create hearts in background
+    const makeHearts = () => {
+      const count = 18;
+      for(let i=0;i<count;i++){
+        const h = document.createElement('div');
+        h.className = 'heart';
+        h.style.left = Math.random()*100 + 'vw';
+        h.style.animationDuration = (5 + Math.random()*6) + 's';
+        h.style.animationDelay = (Math.random()*4) + 's';
+        h.style.opacity = (0.12 + Math.random()*0.25).toFixed(2);
+        h.style.transform = `rotate(45deg) scale(${0.7 + Math.random()*1.5})`;
+        document.body.appendChild(h);
+      }
+    };
+    makeHearts();
+  </script>
+
+  <div class="card">
+    <h1>Will you be my Valentine? 💘</h1>
+    <p class="sub">I'm yours. No refunds or exchanges allowed! 😌</p>
+
+    <div class="photos">
+      <!-- Replace these image files with your own -->
+      <div class="photo"><img src="couple1.jpg" alt="Us photo 1"></div>
+      <div class="photo"><img src="couple2.jpg" alt="Us photo 2"></div>
+    </div>
+    
+    <div class="toast" id="toast"></div>
+
+    <div class="arena" id="arena">
+      <button class="btn" id="yesBtn">Yes 💖</button>
+      <button class="btn" id="noBtn">No 😭</button>
+    </div>
+
+    <div class="hint">Try clicking “No”… if you can 😈</div>
+  </div>
+
+  <div class="modalWrap" id="modalWrap">
+    <div class="modal">
+      <div class="yay">YAYYYYYYYY 🥳💘</div>
+      <p id="yesMessage">
+        You just made me the happiest girl 😭❤️<br/>
+        Now come here, Valentine 💋
+      </p>
+      <button class="close" id="closeModal">Okayyy 💞</button>
+    </div>
+  </div>
+
+  <script>
+    const arena = document.getElementById('arena');
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const toast = document.getElementById('toast');
+    const modalWrap = document.getElementById('modalWrap');
+    const closeModal = document.getElementById('closeModal');
+
+    // Messages when he tries "No"
+    const noMessages = [
+      "Wrong button, BBG 😌",
+      "No is not available today 💅",
+      "Yaa right as IF you have that option 🤪",
+      "Baby… you know the answer 😈",
+      "I SAID YOU DO NOT HAVE THAT OPTION 💘"
+    ];
+    let msgIndex = 0;
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add('show');
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(() => toast.classList.remove('show'), 1200);
+    }
+
+    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+
+    function moveNoButton(){
+        const arenaRect = arena.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const yesRect = yesBtn.getBoundingClientRect();
+
+        const pad = 10;
+        const maxX = arenaRect.width - btnRect.width - pad;
+        const maxY = arenaRect.height - btnRect.height - pad;
+
+        // try a few times to avoid landing on YES
+        for (let tries = 0; tries < 20; tries++) {
+        const x = Math.random() * maxX + pad;
+        const y = Math.random() * maxY + pad;
+
+        // Convert YES rect into arena coordinates
+        const yesX = yesRect.left - arenaRect.left;
+        const yesY = yesRect.top - arenaRect.top;
+
+        const overlap =
+            x < yesX + yesRect.width &&
+            x + btnRect.width > yesX &&
+            y < yesY + yesRect.height &&
+            y + btnRect.height > yesY;
+
+        if (!overlap) {
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+            return;
+        }
+        }
+
+        // fallback
+        noBtn.style.left = (Math.random() * maxX + pad) + 'px';
+        noBtn.style.top = (Math.random() * maxY + pad) + 'px';
+    }
+
+
+
+    // Make "No" run away BEFORE click
+    // Use mouseover + mousemove for desktop, touchstart for mobile
+    const dodge = () => {
+      moveNoButton();
+      showToast(noMessages[msgIndex % noMessages.length]);
+      msgIndex++;
+    };
+
+    noBtn.addEventListener('mouseover', dodge);
+    noBtn.addEventListener('mousemove', dodge);
+    // noBtn.addEventListener('mouseenter', dodge);
+
+    noBtn.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      dodge();
+    }, {passive:false});
+
+    // If somehow clicked, still dodge
+    noBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      dodge();
+    });
+
+    // YES action: open modal + confetti
+    function confettiBurst(){
+      const pieces = 90;
+      for(let i=0;i<pieces;i++){
+        const c = document.createElement('div');
+        c.className = 'confetti';
+        c.style.left = Math.random()*100 + 'vw';
+        c.style.animationDuration = (1.6 + Math.random()*1.8) + 's';
+        c.style.transform = `rotate(${Math.random()*360}deg)`;
+        c.style.background = `hsl(${Math.random()*360}, 90%, 60%)`;
+        document.body.appendChild(c);
+        setTimeout(() => c.remove(), 3500);
+      }
+    }
+
+    yesBtn.addEventListener('click', () => {
+      confettiBurst();
+      modalWrap.style.display = 'flex';
+    });
+
+    closeModal.addEventListener('click', () => {
+      modalWrap.style.display = 'none';
+    });
+
+    modalWrap.addEventListener('click', (e) => {
+      if(e.target === modalWrap) modalWrap.style.display = 'none';
+    });
+
+    // Start with a slightly random No position
+    // moveNoButton();
+  </script>
+</body>
+</html>
