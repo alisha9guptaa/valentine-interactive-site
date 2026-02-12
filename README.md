@@ -26,6 +26,11 @@ This project features:
 ## 💡 Project Purpose
 Built as a fun interactive frontend project to explore JavaScript-based UI behavior and event handling.
 
+## 📚 What I Learned
+- Handling DOM elements dynamically
+- Managing event listeners for interactive UI
+- Using randomized logic for movement behavior
+- Implementing basic collision detection
 
 ## 👩‍💻 Author
 Alisha Gupta  
